@@ -6,19 +6,48 @@ namespace Nelder_Mid
 {
     class Point
     {
-        private List<float> valueVector;
+        private List<double> valueVector;
+        private double functionValue;
 
-        public Point(float[] currentValues)
+        public Point(double[] currentValues, FunctionOfAlgo function)
         {
-            valueVector = new List<float>(currentValues);
+            valueVector = new List<double>(currentValues);
+            functionValue = function(this);
+        }
+
+        public Point(Point currentPoint, FunctionOfAlgo function)
+        {
+            valueVector = new List<double>(currentPoint.valueVector);
+            functionValue = function(this); 
+        }
+
+        public Point(double[] currentValues)
+        {
+            valueVector = new List<double>(currentValues);
+        }
+
+        public double FunctionValue
+        {
+            get => functionValue;
+            set => functionValue = value;
+        }
+
+        public double[] ValueVectorToArray
+        {
+            get => valueVector.ToArray();
+        }
+
+        public void setFunctionValue(FunctionOfAlgo function)
+        {
+            functionValue = function(this);
         }
 
         public Point(Point[] points, int count)
         {
-            valueVector = new List<float>();
+            valueVector = new List<double>();
             for(int i = 0; i < points[0].size(); i++)
             {
-                float sum = 0;
+                double sum = 0;
                 for (int j = 0; j < count; j++)
                 {
                     sum += points[j].getValueByIndex(i);
@@ -27,12 +56,33 @@ namespace Nelder_Mid
             }
         }
 
-        public void addValue(float value)
+        public void addValue(double value)
         {
             valueVector.Add(value);
         }
 
-        public float getValueByIndex(int index)
+        public static bool twoPointsMatch(Point point1, Point point2)
+        {
+            bool result = true;
+            if(point1.functionValue == point2.functionValue)
+            {
+                for(int i = 0; i < point1.size(); i++)
+                {
+                    if(point1.valueVector[i] != point2.valueVector[i])
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                return false;
+            }
+            return result;
+        }
+
+        public double getValueByIndex(int index)
         {
             return valueVector[index];
         }
@@ -42,16 +92,16 @@ namespace Nelder_Mid
             return valueVector.Count;
         }
 
-        public Point getNewPointDelta(float delta, int index)
+        public Point getNewPointDelta(double delta, int index, FunctionOfAlgo function)
         {
-            float[] buffer = valueVector.ToArray();
+            double[] buffer = valueVector.ToArray();
             buffer[index] += delta;
-            return new Point(buffer);
+            return new Point(buffer, function);
         }
 
         public static Point operator +(Point point1, Point point2)
         {
-            List<float> buffer = new List<float>(point1.valueVector);
+            List<double> buffer = new List<double>(point1.valueVector);
             for (int i = 0; i < point2.size(); i++)
             {
                 buffer[i] += point2.getValueByIndex(i);
@@ -59,9 +109,9 @@ namespace Nelder_Mid
             return new Point(buffer.ToArray());
         }
 
-        public static Point operator *(Point point1, float stepValue)
+        public static Point operator *(Point point1, double stepValue)
         {
-            List<float> buffer = new List<float>(point1.valueVector);
+            List<double> buffer = new List<double>(point1.valueVector);
             for (int i = 0; i < point1.size(); i++)
             {
                 buffer[i] *= stepValue;
@@ -69,9 +119,30 @@ namespace Nelder_Mid
             return new Point(buffer.ToArray());
         }
 
-        public static Point operator /(Point point1, float valueOfDivision)
+
+        public static bool operator <=(Point point1, Point point2)
         {
-            List<float> buffer = new List<float>(point1.valueVector);
+            return point1.functionValue <= point2.functionValue;
+        }
+
+        public static bool operator >=(Point point1, Point point2)
+        {
+            return point1.functionValue >= point2.functionValue;
+        }
+
+        public static bool operator <(Point point1, Point point2)
+        {
+            return point1.functionValue < point2.functionValue;
+        }
+
+        public static bool operator >(Point point1, Point point2)
+        {
+            return point1.functionValue > point2.functionValue;
+        }
+
+        public static Point operator /(Point point1, double valueOfDivision)
+        {
+            List<double> buffer = new List<double>(point1.valueVector);
             for (int i = 0; i < point1.size(); i++)
             {
                 buffer[i] /= valueOfDivision;
@@ -81,7 +152,7 @@ namespace Nelder_Mid
 
         public static Point operator -(Point point1, Point point2)
         {
-            List<float> buffer = new List<float>(point1.valueVector);
+            List<double> buffer = new List<double>(point1.valueVector);
             for (int i = 0; i < point1.size(); i++)
             {
                 buffer[i] -= point2.getValueByIndex(i);
@@ -91,19 +162,27 @@ namespace Nelder_Mid
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder("X = (");
-            foreach (float value in valueVector)
+            StringBuilder sb = new StringBuilder("F(");
+            /*foreach (float value in valueVector)
             {
                 sb.Append(value);
-                sb.Append(" ");
+                sb.Append(", ");
+            }*/
+            for(int i=0; i < valueVector.Count - 1; i++)
+            {
+                sb.Append(valueVector[i]);
+                sb.Append(", ");
             }
-            sb.Append(")");
+            sb.Append(valueVector[valueVector.Count - 1]);
+            sb.Append(") = ");
+            sb.Append(functionValue);
+
             return sb.ToString();
         }
 
         public static Point unitPointWithPosition(int position, int pointSize)
         {
-            float[] buffer = new float[pointSize];
+            double[] buffer = new double[pointSize];
             buffer[position] = 1;
             return new Point(buffer);
         }

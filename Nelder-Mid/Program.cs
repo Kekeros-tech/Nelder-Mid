@@ -3,109 +3,52 @@ using System.Collections.Generic;
 
 namespace Nelder_Mid
 {
+    delegate double FunctionOfAlgo(Point currentPoint);
+
     class Program
     {
-        public static double function(Point currentPoint)
+        public static double rosenbrockFunction(Point currentPoint)
         {
-            float x1 = currentPoint.getValueByIndex(0);
-            float x2 = currentPoint.getValueByIndex(1);
+            double x1 = currentPoint.getValueByIndex(0);
+            double x2 = currentPoint.getValueByIndex(1);
             return 100 * Math.Pow((x2 - Math.Pow(x1, 2)), 2) + Math.Pow((1 - x1), 2);
         }
 
-        static Point[] setiInitialVectors(Point startPoint, float l, int dimension)
+        public static double bootFunction(Point currentPoint)
         {
-            List<Point> currentArray = new List<Point>();
-            currentArray.Add(startPoint);
-            for(int i = 0; i < dimension; i++)
-            {
-                Point nextPoint = startPoint + Point.unitPointWithPosition(i, startPoint.size()) * l;
-                currentArray.Add(nextPoint);
-            }
-            return currentArray.ToArray();
-        }
-
-        static bool targetAccuracyReached(float accuracy, Point[] pointArray)
-        {
-            double sum = 0;
-            for(int i = 1; i < pointArray.Length; i++)
-            {
-                double a = function(pointArray[i]);
-                double b = function(pointArray[0]);
-                sum += Math.Pow(a - b , 2);
-            }
-            double result = Math.Sqrt(sum / (pointArray.Length - 1));
-            return (result - accuracy) < 0;
+            double x1 = currentPoint.getValueByIndex(0);
+            double x2 = currentPoint.getValueByIndex(1);
+            return Math.Pow(x1 + 2 * x2 - 7, 2) + Math.Pow(2 * x1 + x2 - 5, 2);
         }
 
         static void Main(string[] args)
         {
-            int dimension = 2;
-            float[] valuesOfStartPoint = { -1.2f, 1 };
-            float scalar = 2;
-            Point startPoint = new Point(valuesOfStartPoint);
-            Point[] pointArray = setiInitialVectors(startPoint, scalar, dimension);
-            Array.Sort(pointArray, new PointComparer());
+            //Nelder-Mid
+            int dimension = 2; // размерность
+            FunctionOfAlgo function = new FunctionOfAlgo(rosenbrockFunction); // функция для оптимизации
+            double reflection = 1; //коэф отражения
+            double stretching = 2; //коэф растяжения
+            double compression = 0.5f; //коэф сжатия
+            double accuracy = 0.000000000001f; //заданная точность
+            double constriction = 2; // сжатие многогранника
+            ControlParametrs parametrs = new ControlParametrs(dimension,function,reflection, stretching, compression,accuracy,constriction);
 
-            float reflection = 1; //коэф отражения
-            float stretching = 2; //коэф растяжения
-            float compression = 0.5f; //коэф сжатия
-            float accuracy = 0.0000001f; //заданная точность
-            ControlParametrs controlParametrs = new ControlParametrs(reflection, stretching, compression);
+            //задание начального симплекса
+            double[] valuesOfStartPoint = { -1.2f, 1 };
+            Nelder_Mid nelder_Mid = new Nelder_Mid(valuesOfStartPoint, 2, parametrs);
 
-            while (!targetAccuracyReached(accuracy, pointArray))
-            {
-                Point centerOfGravity = new Point(pointArray, dimension) / dimension;
-                Point pointOfReflection = centerOfGravity + (centerOfGravity - pointArray[dimension]) * controlParametrs.Reflection;
+            Console.WriteLine("Лучшее значение функции полученное алгоритмом: " + nelder_Mid.runAlgorithmWithGivenParameters());
 
-                if (function(pointArray[0]) <= function(pointOfReflection)
-                    && function(pointOfReflection) <= function(pointArray[dimension - 1]))
-                {
-                    pointArray[dimension] = pointOfReflection;
-                    continue;
-                }
-                else if (function(pointOfReflection) < function(pointArray[0]))
-                {
-                    Point pointOfStretching = centerOfGravity + (pointOfReflection - centerOfGravity) * controlParametrs.Stretching;
-                    if (function(pointOfStretching) < function(pointOfReflection))
-                    {
-                        pointArray[dimension] = pointOfStretching;
-                    }
-                    else
-                    {
-                        pointArray[dimension] = pointOfReflection;
-                    }
-                }
-                else if (function(pointOfReflection) > function(pointArray[dimension - 1]))
-                {
-                    Point pointOfCompression = centerOfGravity + (pointArray[dimension] - centerOfGravity) * controlParametrs.Compression;
-                    if(function(pointOfReflection) < function(pointArray[dimension]))
-                    {
-                        pointOfCompression = centerOfGravity + (pointOfReflection - centerOfGravity) * controlParametrs.Compression;
-                    }
+            //Hooke-Jeeves
+            double[] startingValues = { -1.2f, 1 };
+            double[] deltaValues = { 0.0004f, 0.0004f };
+            double stepValue = 2.8f;
+            double accuracyForHookeJeeves = 0.7f;
+            ControlParametrsForHookeJeeves controlParametrs = new ControlParametrsForHookeJeeves(deltaValues, stepValue, accuracyForHookeJeeves, function);
 
-                    if(function(pointOfCompression) < Math.Min(function(pointArray[dimension]), function(pointOfReflection)))
-                    {
-                        pointArray[dimension] = pointOfCompression;
-                    }
-                    else
-                    {
-                        for(int i = 1; i < pointArray.Length; i++)
-                        {
-                            pointArray[i] = (pointArray[0] + pointArray[i]) / 2; 
-                        }
-                    }
-                }
-                Array.Sort(pointArray, new PointComparer());
-                Console.WriteLine("---");
-                foreach (Point point in pointArray)
-                {
-                    Console.WriteLine(point);
-                    Console.WriteLine(function(point));
-                }
-            }
-            Console.WriteLine();
-            Console.WriteLine("Лучший результат" + pointArray[0]);
-            Console.WriteLine("Значение в этой точке: " + function(pointArray[0]));
+            Hooke_Jeeves hooke_Jeeves = new Hooke_Jeeves(valuesOfStartPoint, controlParametrs);
+
+            Console.WriteLine("Лучшее решение полученное алгоритмом: " + hooke_Jeeves.runAlgorithmWithGivenParameters());
         }
     }
 }

@@ -10,9 +10,9 @@ namespace Nelder_Mid
         Point currentPoint;
 
 
-        public Hooke_Jeeves(double[] valuesOfStartPoint, ControlParametrsForHookeJeeves parametrs)
+        public Hooke_Jeeves(ControlParametrsForHookeJeeves parametrs)
         {
-            currentPoint = new Point(valuesOfStartPoint, parametrs.Function);
+            currentPoint = new Point(parametrs.startingValues, parametrs.Function);
             this.parametrs = parametrs;
         }
 
@@ -53,11 +53,31 @@ namespace Nelder_Mid
             return buffer;
         }
 
+        public bool locatedWithin(Point nextPoint)
+        {
+            if(parametrs.optimizationBoundary != null)
+            {
+                for (int i = 0; i < nextPoint.size(); i++)
+                {
+                    if (nextPoint.getValueByIndex(i) < parametrs.optimizationBoundary.bottomLine[i]
+                                || nextPoint.getValueByIndex(i) > parametrs.optimizationBoundary.topLine[i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         public Point getNextPoint(Point pointAfterDelta)
         {
             Point nextPoint = new Point(currentPoint + (pointAfterDelta - currentPoint) * parametrs.getStepValue(), parametrs.Function);
             if(nextPoint < pointAfterDelta)
             {
+                if(!locatedWithin(nextPoint))
+                {
+                    nextPoint = new Point(nextPoint);
+                }
                 return nextPoint;
             }
             return pointAfterDelta;
@@ -78,9 +98,7 @@ namespace Nelder_Mid
 
                 currentPoint = nextPoint;
             }
-
             return currentPoint;
-
         }
     }
 }

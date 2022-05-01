@@ -119,7 +119,7 @@ namespace Nelder_Mid
             {
                 reducePolygon();
             }
-            //checkOutOfBounds();
+            checkOutOfBounds();
             Array.Sort(pointArray, new PointComparer());
         }
 
@@ -131,7 +131,6 @@ namespace Nelder_Mid
                 {
                     for (int j = 0; j < pointArray[i].size(); j++)
                     {
-                        Console.WriteLine(pointArray[i].ValueVectorToArray[j]);
                         if (pointArray[i].ValueVectorToArray[j] < parametrs.optimizationBoundary.bottomLine[j] 
                             || pointArray[i].ValueVectorToArray[j] > parametrs.optimizationBoundary.topLine[j])
                         {

@@ -166,6 +166,16 @@ namespace Nelder_Mid
             return new Point(buffer.ToArray());
         }
 
+        public static double operator *(Point point1, Point point2)
+        {
+            double buffer = 0;
+            for (int i = 0; i < point1.size(); i++)
+            {
+                buffer += point1.getValueByIndex(i) * point2.getValueByIndex(i);
+            }
+            return buffer;
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder("F(");

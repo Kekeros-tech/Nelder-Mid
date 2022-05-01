@@ -10,6 +10,8 @@ namespace Nelder_Mid
         private double stepValue;
         private double accuracy;
         private FunctionOfAlgo function;
+        public OptimizationBoundary optimizationBoundary;
+        public double[] startingValues;
 
         public double Accuracy
         {
@@ -23,12 +25,15 @@ namespace Nelder_Mid
             set => function = value;
         }
 
-        public ControlParametrsForHookeJeeves(double[] currentValues, double stepValue, double accuracy, FunctionOfAlgo function)
+        public ControlParametrsForHookeJeeves(double[] currentValues, double stepValue, double accuracy, 
+            FunctionOfAlgo function, OptimizationBoundary optimizationBoundary, double[] startingValues)
         {
             controlVector = new List<double>(currentValues);
             this.stepValue = stepValue;
             this.accuracy = accuracy;
             this.function = function;
+            this.optimizationBoundary = optimizationBoundary;
+            this.startingValues = startingValues;
         }
 
         public double getDeltaByIndex(int index)

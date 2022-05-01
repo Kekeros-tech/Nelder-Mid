@@ -9,10 +9,10 @@ namespace Nelder_Mid
         private ControlParametrs parametrs;
         private Point[] pointArray;
 
-        public Nelder_Mid(double[] valuesOfStartPoint, double scalar, ControlParametrs parametrs)
+        public Nelder_Mid(double scalar, ControlParametrs parametrs)
         {
             this.parametrs = parametrs;
-            pointArray = setInitialSimplex(valuesOfStartPoint, scalar);
+            pointArray = setInitialSimplex(parametrs.valuesOfStartPoint, scalar);
         }
 
         public Point[] setInitialSimplex(double[] valuesOfStartPoint, double scalar)
@@ -119,7 +119,27 @@ namespace Nelder_Mid
             {
                 reducePolygon();
             }
+            //checkOutOfBounds();
             Array.Sort(pointArray, new PointComparer());
+        }
+
+        public void checkOutOfBounds()
+        {
+            if(parametrs.optimizationBoundary != null)
+            {
+                for (int i = 0; i < pointArray.Length; i++)
+                {
+                    for (int j = 0; j < pointArray[i].size(); j++)
+                    {
+                        Console.WriteLine(pointArray[i].ValueVectorToArray[j]);
+                        if (pointArray[i].ValueVectorToArray[j] < parametrs.optimizationBoundary.bottomLine[j] 
+                            || pointArray[i].ValueVectorToArray[j] > parametrs.optimizationBoundary.topLine[j])
+                        {
+                            pointArray[i] = new Point(pointArray[i]);
+                        }
+                    }
+                }
+            }
         }
 
         public void printCurrentPointArray()

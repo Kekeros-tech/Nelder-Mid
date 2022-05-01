@@ -4,6 +4,18 @@ using System.Text;
 
 namespace Nelder_Mid
 {
+    class OptimizationBoundary
+    {
+        public double[] bottomLine;
+        public double[] topLine;
+
+        public OptimizationBoundary(double[] bottomLine, double[] topLine)
+        {
+            this.bottomLine = bottomLine;
+            this.topLine = topLine;
+        }
+    }
+
     class ControlParametrs
     {
         private int dimension;
@@ -13,6 +25,9 @@ namespace Nelder_Mid
         private double compression;
         private double accuracy;
         private double constriction;
+        public double[] valuesOfStartPoint;
+        public OptimizationBoundary optimizationBoundary;
+        
 
         public int Dimension
         {
@@ -57,7 +72,8 @@ namespace Nelder_Mid
         }
 
         public ControlParametrs(int dimension, FunctionOfAlgo function,double reflection,
-            double stretching, double compression, double accuracy, double constriction)
+            double stretching, double compression, double accuracy, double constriction, 
+            double[] valuesOfStartPoint, OptimizationBoundary optimizationBoundary)
         {
             this.dimension = dimension;
             this.function = function;
@@ -66,7 +82,8 @@ namespace Nelder_Mid
             this.compression = compression;
             this.accuracy = accuracy;
             this.constriction = constriction;
-
-    }
+            this.valuesOfStartPoint = valuesOfStartPoint;
+            this.optimizationBoundary = optimizationBoundary;
+        }
     }
 }

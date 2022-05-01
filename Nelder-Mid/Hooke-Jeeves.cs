@@ -9,6 +9,7 @@ namespace Nelder_Mid
         ControlParametrsForHookeJeeves parametrs;
         Point currentPoint;
 
+
         public Hooke_Jeeves(double[] valuesOfStartPoint, ControlParametrsForHookeJeeves parametrs)
         {
             currentPoint = new Point(valuesOfStartPoint, parametrs.Function);

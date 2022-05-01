@@ -21,6 +21,12 @@ namespace Nelder_Mid
             functionValue = function(this); 
         }
 
+        public Point(Point currentPoint)
+        {
+            valueVector = new List<double>(currentPoint.valueVector);
+            functionValue = double.MaxValue;
+        }
+
         public Point(double[] currentValues)
         {
             valueVector = new List<double>(currentValues);

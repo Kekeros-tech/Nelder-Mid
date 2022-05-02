@@ -12,7 +12,7 @@ namespace Nelder_Mid
 
         public Hooke_Jeeves(ControlParametrsForHookeJeeves parametrs)
         {
-            currentPoint = new Point(parametrs.startingValues, parametrs.Function);
+            //currentPoint = parametrs.startPoint;
             this.parametrs = parametrs;
         }
 
@@ -85,6 +85,8 @@ namespace Nelder_Mid
 
         public Point runAlgorithmWithGivenParameters()
         {
+            currentPoint = parametrs.startPoint;
+
             while (!betterAccuracy())
             {
                 Point buffer = getPointAfterDelta();

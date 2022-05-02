@@ -11,7 +11,7 @@ namespace Nelder_Mid
         private double accuracy;
         private FunctionOfAlgo function;
         public OptimizationBoundary optimizationBoundary;
-        public double[] startingValues;
+        public Point startPoint;
 
         public double Accuracy
         {
@@ -33,7 +33,7 @@ namespace Nelder_Mid
             this.accuracy = accuracy;
             this.function = function;
             this.optimizationBoundary = optimizationBoundary;
-            this.startingValues = startingValues;
+            this.startPoint = new Point(startingValues, function);
         }
 
         public double getDeltaByIndex(int index)

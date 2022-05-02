@@ -67,17 +67,28 @@ namespace Nelder_Mid
             valueVector.Add(value);
         }
 
+        public List<Point> generateGrid(double[] deltas, FunctionOfAlgo function)
+        {
+            List<Point> resultOfPoint = new List<Point>();
+            for(int i = 0; i < deltas.Length; i++)
+            {
+                for (int j = -5; j < 5; j++)
+                {
+                    resultOfPoint.Add(getNewPointDelta(j * deltas[i], i, function));
+                }
+            }
+            return resultOfPoint;
+        }
+
         public static bool twoPointsMatch(Point point1, Point point2)
         {
-            bool result = true;
             if(point1.functionValue == point2.functionValue)
             {
                 for(int i = 0; i < point1.size(); i++)
                 {
                     if(point1.valueVector[i] != point2.valueVector[i])
                     {
-                        result = false;
-                        break;
+                        return false;
                     }
                 }
             }
@@ -85,7 +96,7 @@ namespace Nelder_Mid
             {
                 return false;
             }
-            return result;
+            return true;
         }
 
         public double getValueByIndex(int index)
@@ -103,6 +114,16 @@ namespace Nelder_Mid
             double[] buffer = valueVector.ToArray();
             buffer[index] += delta;
             return new Point(buffer, function);
+        }
+
+        public Point getPointAfterAllDelta(double[] deltas, FunctionOfAlgo function)
+        {
+            Point result = null;
+            for(int i = 0; i < valueVector.Count; i++)
+            {
+                result = getNewPointDelta(deltas[i], i, function);
+            }
+            return result;
         }
 
         public static Point operator +(Point point1, Point point2)

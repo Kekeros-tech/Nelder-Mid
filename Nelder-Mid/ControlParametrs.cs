@@ -25,7 +25,7 @@ namespace Nelder_Mid
         private double compression;
         private double accuracy;
         private double constriction;
-        public double[] valuesOfStartPoint;
+        public Point startPoint;
         public OptimizationBoundary optimizationBoundary;
         
 
@@ -82,7 +82,7 @@ namespace Nelder_Mid
             this.compression = compression;
             this.accuracy = accuracy;
             this.constriction = constriction;
-            this.valuesOfStartPoint = valuesOfStartPoint;
+            this.startPoint = new Point(valuesOfStartPoint, function);
             this.optimizationBoundary = optimizationBoundary;
         }
     }

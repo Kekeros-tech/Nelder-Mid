@@ -7,18 +7,16 @@ namespace Nelder_Mid
     class Nelder_Mid
     {
         private ControlParametrs parametrs;
-        private Point[] pointArray;
+        public Point[] pointArray;
 
         public Nelder_Mid(double scalar, ControlParametrs parametrs)
         {
             this.parametrs = parametrs;
-            pointArray = setInitialSimplex(parametrs.valuesOfStartPoint, scalar);
+            //pointArray = setInitialSimplex(parametrs.startPoint, scalar);
         }
 
-        public Point[] setInitialSimplex(double[] valuesOfStartPoint, double scalar)
+        public Point[] setInitialSimplex(Point startPoint, double scalar)
         {
-            Point startPoint = new Point(valuesOfStartPoint, parametrs.Function);
-
             List<Point> currentArray = new List<Point>();
             currentArray.Add(startPoint);
 
@@ -152,6 +150,8 @@ namespace Nelder_Mid
 
         public Point runAlgorithmWithGivenParameters()
         {
+            pointArray = setInitialSimplex(parametrs.startPoint, 2);
+
             while (!targetAccuracyReached())
             {
                 Point resultOfAlgo = assignValueToLastPoint();
